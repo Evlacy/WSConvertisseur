@@ -1,18 +1,30 @@
-﻿namespace WSConvertisseur.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WSConvertisseur.Models
 {
-    public class Devise
+	/// <summary>
+	/// Currency class
+	/// </summary>
+	public class Devise
     {
 		private int id;
 
-		public int Id
+        /// <summary>
+        /// Currency's id
+        /// </summary>
+        public int Id
 		{
 			get { return id; }
 			set { id = value; }
 		}
 
+		[Required]
 		private string nomDevise;
 
-		public string NomDevise
+        /// <summary>
+        /// Currency's name
+        /// </summary>
+        public string NomDevise
 		{
 			get { return nomDevise; }
 			set { nomDevise = value; }
@@ -20,20 +32,54 @@
 
 		private double taux;
 
-		public double  Taux
+        /// <summary>
+        /// Currency's rate
+        /// </summary>
+        public double  Taux
 		{
 			get { return taux; }
 			set { taux = value; }
 		}
 
+        /// <summary>
+		/// Currency's default constructor
+		/// </summary>
 		public Devise()
 		{ }
 
-        public Devise(int id, string nomDevise, double taux)
+        /// <summary>
+		/// Create a currency
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="nomDevise"></param>
+		/// <param name="taux"></param>
+		public Devise(int id, string nomDevise, double taux)
         {
             this.Id = id;
             this.NomDevise = nomDevise;
             this.Taux = taux;
+        }
+
+        /// <summary>
+        /// Equals function
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj)
+        {
+            return obj is Devise devise &&
+                   this.Id == devise.Id &&
+                   this.NomDevise == devise.NomDevise &&
+                   this.Taux == devise.Taux;
+        }
+
+        /// <summary>
+        /// GetHashCode function
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(this.Id, this.NomDevise, this.Taux);
         }
     }
 }
