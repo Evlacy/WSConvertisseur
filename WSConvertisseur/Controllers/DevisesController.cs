@@ -142,7 +142,7 @@ namespace WSConvertisseur.Controllers
             Devise devise = Devises.FirstOrDefault((d) => d.Id == id);
             if (devise == null)
             {
-                return NoContent();
+                return NotFound();
             }
             Devises.Remove(devise);
             return devise;
