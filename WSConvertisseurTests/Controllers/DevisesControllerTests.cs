@@ -15,12 +15,16 @@ namespace WSConvertisseur.Controllers.Tests
     [TestClass()]
     public class DevisesControllerTests
     {
+        public DevisesController controller;
+        [TestInitialize]
+        public void InitialisationDesTests()
+        {
+            controller = new DevisesController();
+        }
+
         [TestMethod()]
         public void GetAllTest()
         {
-            // Arrange
-            DevisesController controller = new DevisesController();
-
             // Act
             var result = controller.GetAll();
 
@@ -37,9 +41,6 @@ namespace WSConvertisseur.Controllers.Tests
         [TestMethod]
         public void GetById_ExistingIdPassed_ReturnsRightItem()
         {
-            // Arrange
-            DevisesController controller = new DevisesController();
-
             // Act
             var result = controller.GetById(1);
 
@@ -53,9 +54,6 @@ namespace WSConvertisseur.Controllers.Tests
         [TestMethod]
         public void GetById_UnknownGuidPassed_ReturnsNotFoundResult()
         {
-            // Arrange
-            DevisesController controller = new DevisesController();
-
             // Act
             var result = controller.GetById(20);
 
@@ -68,9 +66,6 @@ namespace WSConvertisseur.Controllers.Tests
         [TestMethod]
         public void Post_InvalidObjectPassed_ReturnsBadRequest()
         {
-            // Arrange
-            DevisesController controller = new DevisesController();
-
             // Act
             var result = controller.Post(new Devise(4, null, 4.0));
 
@@ -86,9 +81,6 @@ namespace WSConvertisseur.Controllers.Tests
         [TestMethod]
         public void Post_ValidObjectPassed_ReturnsObject()
         {
-            // Arrange
-            DevisesController controller = new DevisesController();
-
             // Act
             var result = controller.Post(new Devise(4, "Rouble", 4.0));
 
@@ -104,85 +96,77 @@ namespace WSConvertisseur.Controllers.Tests
         [TestMethod]
         public void Put_InvalidUpdate_ReturnsBadRequest()
         {
-            // Arrange
-            DevisesController controller = new DevisesController();
-
             // Act
-            var result = controller.Put(2, new Devise(3, "Lamar", 4.0));
+            var result = controller.Put(1, new Devise(4, "Pakistan", 10));
 
             // Assert
+            Assert.IsInstanceOfType(result, typeof(ActionResult), "Pas un ActionResult"); // Test du type de retour
+            Assert.IsInstanceOfType(result, typeof(BadRequestResult), "Pas de type BadRequestResult"); // Test de l'erreur
 
-            Assert.IsInstanceOfType(result, typeof(ActionResult<Devise>), "Pas un ActionResult"); // Test du type de retour
-
-            BadRequestResult routeResult = (BadRequestResult)result;
-            Assert.IsInstanceOfType(routeResult, typeof(BadRequestResult), "Pas un BadRequestResult"); // Test de l'erreur
-            Assert.AreEqual(routeResult.StatusCode, StatusCodes.Status400BadRequest, "Pas un StatusCodes");
+            BadRequestResult badRequestResult = (BadRequestResult)result;
+            Assert.AreEqual(StatusCodes.Status400BadRequest, badRequestResult.StatusCode, "pas un StatusCode");
         }
 
         [TestMethod]
         public void Put_InvalidUpdate_ReturnsNotFound()
         {
-            // Arrange
-            DevisesController controller = new DevisesController();
-
             // Act
-            var result = controller.Put(1, new Devise(50, null, 4.0));
+            var result = controller.Put(100, new Devise(100, "Pakistan", 10));
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(ActionResult<Devise>), "Pas un ActionResult");
+            Assert.IsInstanceOfType(result, typeof(ActionResult), "Pas un ActionResult"); // Test du type de retour
+            Assert.IsInstanceOfType(result, typeof(NotFoundResult), "Pas de type NotFoundResult"); // Test de l'erreur
 
-            NotFoundResult routeResult = (NotFoundResult)result;
-            Assert.IsInstanceOfType(routeResult, typeof(NotFoundResult), "Pas un NotFoundResult");
-            Assert.AreEqual(routeResult.StatusCode, StatusCodes.Status404NotFound, "Pas un StatusCodes");
+            NotFoundResult notFoundtResult = (NotFoundResult)result;
+            Assert.AreEqual(StatusCodes.Status404NotFound, notFoundtResult.StatusCode, "Pas un StatusCode");
         }
 
         [TestMethod]
         public void Put_InvalidUpdate_ReturnsNoContent()
         {
-            // Arrange
-            DevisesController controller = new DevisesController();
-
             // Act
-            var result = controller.Put(1, new Devise(1, "Rouble", 4.0));
+            var result = controller.Put(1, new Devise(1, "Paps", 10));
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(ActionResult<Devise>), "Pas un ActionResult");
+            Assert.IsInstanceOfType(result, typeof(ActionResult), "Pas un ActionResult"); // Test du type de retour
+            Assert.IsInstanceOfType(result, typeof(NoContentResult), "Pas de type NoContentResult"); // Test de l'erreur
 
-            NoContentResult routeResult = (NoContentResult)result;
-            Assert.IsInstanceOfType(routeResult, typeof(NoContentResult), "Pas un NoContentResult");
-            Assert.AreEqual(routeResult.StatusCode, StatusCodes.Status204NoContent, "Pas un StatusCodes");
+            NoContentResult noContentResult = (NoContentResult)result;
+            Assert.AreEqual(StatusCodes.Status204NoContent, noContentResult.StatusCode, "Pas un StatusCode");
         }
 
         [TestMethod]
         public void Delete_NotOk_ReturnsNotFound()
         {
             // Arrange
-            DevisesController controller = new DevisesController();
+            // DevisesController controller = new DevisesController();
 
             // Act
-            var result = controller.Delete(10);
+            var result = controller.Delete(100);
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(ActionResult<Devise>), "Pas un ActionResult"); // Test du type de retour
-            
-            NotFoundResult routeResult = (NotFoundResult)result.Result;
 
-            Assert.IsInstanceOfType(routeResult, typeof(NotFoundResult), "Pas un NotFoundResult"); // Test de l'erreur
-            Assert.AreEqual(StatusCodes.Status404NotFound, routeResult.StatusCode, "Pas un StatusCode");
+            //Assert.IsInstanceOfType(result, typeof(NotFoundResult), "pas de type NoContentResult"); //Test de l'erreur
+            NotFoundResult notFoundResult = (NotFoundResult)result.Result;
+            Assert.AreEqual(StatusCodes.Status404NotFound, notFoundResult.StatusCode, "Pas un StatusCode");
         }
 
         [TestMethod]
         public void Delete_Ok_ReturnsRightItem()
         {
             // Arrange
-            DevisesController controller = new DevisesController();
+            // DevisesController controller = new DevisesController();
 
             // Act
             var result = controller.Delete(1);
-            CreatedAtRouteResult routeResult = (CreatedAtRouteResult)result.Result;
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(ActionResult<Devise>), "Pas un ActionResult");
+
+            Assert.IsInstanceOfType(result, typeof(ActionResult<Devise>), "Pas un ActionResult"); // Test du type de retour
+            //Assert.IsInstanceOfType(result, typeof(NotFoundResult), "pas de type NoContentResult"); //Test de l'erreur
+            NotFoundResult notFoundResult = (NotFoundResult)result.Result;
+            Assert.AreEqual(StatusCodes.Status404NotFound, notFoundResult.StatusCode, "Pas un StatusCode");
         }
     }
 }
